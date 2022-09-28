@@ -38,3 +38,6 @@ class User(db.Model):
     audio_data = db.Column(db.String) 
     # Will audio_data always be included at the time of user creation? Or will it be added later? 
     # Should audio_data be a separate table by reference to user id?
+
+    def __repr__(self):
+        return f"Name: {self.name}, Email: {self.email}, Address: {self.address}, Image: {self.image}"
