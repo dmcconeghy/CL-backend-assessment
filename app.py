@@ -90,13 +90,19 @@ def delete_user(user_id):
 
 # AUDIO API ROUTES [POST, GET, PATCH]
 
-@app.route('/api/audio/<int:user_id>', methods=['POST'])
+@app.route('/api/audio/<int:session_id>', methods=['POST'])
 def insert_audio_data(user_id):
-    return "Audio data added"
+    user = User.query.get_or_404(user_id)
+
+    audio = user.audio_data or request.args.get()
+
+    return f"{audio}" or "No audio data found"
 
 @app.route('/api/audio/<int:user_id>/audio', methods=['GET'])
 def read_audio_data(user_id):
-    return "Audio data retrieved"
+    user = User.query.get_or_404(user_id)
+
+    return f"{user.audio_data}" or "No audio data found"
 
 @app.route('/api/audio/<int:user_id>/<int:session_id>', methods=['PATCH'])
 def update_audio_data(user_id, session_id):
@@ -104,26 +110,44 @@ def update_audio_data(user_id, session_id):
     
 
 # USERS API SEARCH ROUTES [GET by id, name, email, or address]
-# These items could be condensed into a single route with a query string, but I wanted to begin using different routes for each search parameter
+# These items will be condensed into a single route with a query string, but I wanted to begin using different routes for each search parameter
 
 @app.route('/api/users/search_id/<int:id>', methods=['GET'])
 def search_by_user_id(id):
-    return "User data found (or not)"
+
+    user = User.query.get_or_404(id)
+
+    return f"{User.__repr__(user)}"
 
 @app.route('/api/users/search_name/<string:name>', methods=['GET'])
 def search_by_user_name(name):
-    return "User data found (or not)"
+
+    # .first() returns a single item, which is useful for testing. 
+    # .all() returns a list of items, which needs to be iterated. 
+    user = User.query.filter_by(User.name == name).first()
+    return f"{User.__repr__(user)}"
 
 @app.route('/api/users/search_email/<string:email>', methods=['GET'])
 def search_by_user_email(email):
-    return "User data found (or not)"
+
+    user = User.query.filter_by(User.email == email).first()
+    return f"{User.__repr__(user)}"
 
 @app.route('/api/users/search_address/<string:address>', methods=['GET'])
 def search_by_user_address(address):
-    return "User data found (or not)"
+
+    user = User.query.filter_by(User.address == address).first()
+    return f"{User.__repr__(user)}"
 
 # AUDIO API SEARCH ROUTES [GET by session_id]
 
-@app.route('/api/audio/search/<int:session_id>', methods=['GET'])
-def search_by_session_id(session_id):
-    return "User data found (or not)"
+# @app.route('/api/audio/search/<int:session_id>', methods=['GET'])
+# def search_by_session_id(session_id):
+
+#     # This will be updated to return a list of audio data for a given session_id
+
+#     # user = User.query.filter_by(User.session_id=session_id).first()
+
+
+#     # This should be updated to return the audio data rather than the user. 
+#     return f"{User.__repr__(user)}"
