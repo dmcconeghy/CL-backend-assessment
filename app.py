@@ -61,21 +61,22 @@ def update_audio_data(user_id, session_id):
     
 
 # USERS API SEARCH ROUTES [GET by id, name, email, or address]
+# These items could be condensed into a single route with a query string, but I wanted to begin using different routes for each search parameter
 
-@app.route('/api/users/search/<int:id>', methods=['GET'])
-def search_by_user_id(user_id):
+@app.route('/api/users/search_id/<int:id>', methods=['GET'])
+def search_by_user_id(id):
     return "User data found (or not)"
 
-@app.route('/api/users/search/<name:string>', methods=['GET'])
-def search_by_user_name(user_name):
+@app.route('/api/users/search_name/<string:name>', methods=['GET'])
+def search_by_user_name(name):
     return "User data found (or not)"
 
-@app.route('/api/users/search/<email:string>', methods=['GET'])
-def search_by_user_email(user_email):
+@app.route('/api/users/search_email/<string:email>', methods=['GET'])
+def search_by_user_email(email):
     return "User data found (or not)"
 
-@app.route('/api/users/search/<address:string>', methods=['GET'])
-def search_by_user_address(user_address):
+@app.route('/api/users/search_address/<string:address>', methods=['GET'])
+def search_by_user_address(address):
     return "User data found (or not)"
 
 # AUDIO API SEARCH ROUTES [GET by session_id]
