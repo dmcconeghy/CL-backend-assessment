@@ -4,7 +4,6 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from models import db, connect_db, User
 
-
 uri = os.environ.get('DATABASE_URL', 'postgresql:///concha_labs')
 
 if uri.startswith("postgres://"):
@@ -54,7 +53,6 @@ def create_user():
         # We can treat the user information individually to make sure all are present before checking for potential duplicate emails.  
         return "A user with that email already exists or you are missing required inputs"
     
-    
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
 
@@ -77,7 +75,6 @@ def update_user(user_id):
 
     return f"Updated {User.__repr__(user)}"
     
-
 @app.route('/api/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
 
@@ -92,6 +89,7 @@ def delete_user(user_id):
 
 @app.route('/api/audio/<int:session_id>', methods=['POST'])
 def insert_audio_data(user_id):
+
     user = User.query.get_or_404(user_id)
 
     audio = user.audio_data or request.args.get()
@@ -108,36 +106,74 @@ def read_audio_data(user_id):
 def update_audio_data(user_id, session_id):
     return "Audio data updated"
     
-
 # USERS API SEARCH ROUTES [GET by id, name, email, or address]
-# These items will be condensed into a single route with a query string, but I wanted to begin using different routes for each search parameter
+# These items will be condensed into a single route with a query string, but I wanted to begin using different routes for each search parameter.
 
-@app.route('/api/users/search_id/<int:id>', methods=['GET'])
+@app.route('/api/users/search/id', methods=['GET'])
 def search_by_user_id(id):
 
-    user = User.query.get_or_404(id)
+    id = request.args.get('id')
 
-    return f"{User.__repr__(user)}"
+    try:
 
-@app.route('/api/users/search_name/<string:name>', methods=['GET'])
-def search_by_user_name(name):
+        user = User.query.get_or_404(id)
+        return f"{User.__repr__(user)}"
+    except IntegrityError:
+        return "No users found"
 
-    # .first() returns a single item, which is useful for testing. 
-    # .all() returns a list of items, which needs to be iterated. 
-    user = User.query.filter_by(User.name == name).first()
-    return f"{User.__repr__(user)}"
+@app.route('/api/users/search/name', methods=['GET'])
+def search_by_user_name():
+    """
+        This route uses SQL %LIKE% to search for a user by name.
+        It will return the first user that matches the search query.
+        It does not currently return multiple matches. 
+    
+    """
 
-@app.route('/api/users/search_email/<string:email>', methods=['GET'])
-def search_by_user_email(email):
+    name = request.args.get('name')
 
-    user = User.query.filter_by(User.email == email).first()
-    return f"{User.__repr__(user)}"
+    user = User.query.filter(User.name.like(f"%{name}%")).first()
 
-@app.route('/api/users/search_address/<string:address>', methods=['GET'])
-def search_by_user_address(address):
+    if not user:
+        return "No users found"
+    else:
+        return f"{User.__repr__(user)}"
+            
+@app.route('/api/users/search/email', methods=['GET'])
+def search_by_user_email():
+    """
+        This route uses SQL %LIKE% to search for a user by email.
+        It will return the first user that matches the search query.
+        It does not currently return multiple matches. 
+    
+    """
 
-    user = User.query.filter_by(User.address == address).first()
-    return f"{User.__repr__(user)}"
+    email = request.args.get('email')
+
+    user = User.query.filter(User.email.like(f"%{email}%")).first()
+
+    if not user:
+        return "No users found."
+    else:
+        return f"{User.__repr__(user)}"
+
+@app.route('/api/users/search/address', methods=['GET'])
+def search_by_user_address():
+    """
+        This route uses SQL %LIKE% to search for a user by address.
+        It will return the first user that matches the search query.
+        It does not currently return multiple matches. 
+    
+    """
+
+    address = request.args.get('address')
+
+    user = User.query.filter(User.address.like(f"%{address}%")).first()
+
+    if not user:
+        return "No users found."
+    else:
+        return f"{User.__repr__(user)}"
 
 # AUDIO API SEARCH ROUTES [GET by session_id]
 
