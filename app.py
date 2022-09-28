@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, jsonify, redirect
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from models import db, connect_db
+from models import db, connect_db, User
 
 
 uri = os.environ.get('DATABASE_URL', 'postgresql:///concha_labs')
@@ -31,11 +31,31 @@ def home_page():
 
 @app.route('/api/users', methods=['POST'])
 def create_user():
-    return "User created"
+
+    name = request.args.get('name')
+    email = request.args.get('email')
+    address = request.args.get('address')
+    image = request.args.get('image')
+
+    new_user = User(
+        name = name,
+        email = email,
+        address = address,
+        image = image
+    )
+
+    db.session.add(new_user)
+    db.session.commit()
+    
+    return f"User created {new_user}"
 
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
-    return "User retrieved"
+
+    user = User.query.get_or_404(user_id)
+
+    # This should be updated to return stringified, ideally with a User class method.  
+    return f"User retrieved: {User.__repr__(user)}" 
 
 @app.route('/api/users/<int:user_id>', methods=['PATCH'])
 def update_user(user_id):
