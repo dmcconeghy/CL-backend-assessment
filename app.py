@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from models import db, connect_db, User
@@ -37,18 +37,22 @@ def create_user():
     address = request.args.get('address')
     image = request.args.get('image')
 
-    new_user = User(
-        name = name,
-        email = email,
-        address = address,
-        image = image
-    )
+    try: 
+        new_user = User(
+            name = name,
+            email = email,
+            address = address,
+            image = image
+        )
 
-    db.session.add(new_user)
-    db.session.commit()
+        db.session.add(new_user)
+        db.session.commit()
+
+        return f"User created {new_user}"
+    except IntegrityError:
+        return "A user with that email already exists"
     
-    return f"User created {new_user}"
-
+    
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
 
