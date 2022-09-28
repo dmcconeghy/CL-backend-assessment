@@ -9,17 +9,13 @@ def connect_db(app):
 
 class User(db.Model):
     """ 
-        User Model has two parts:
-            Basic information: id, name, email, address, and image
-            JSON audio data as follows: 
+        User Model includes id, name, email, address, image, and, by relation, audio data.
+           
+         # Address could be divided into street, city, state, zip, etc.
+        # We can also use a separate table for address
+        # We can decide on a max string length for the address later. 
+        # Image is a string of the image file name
 
-                '{
-                    "ticks": [-96.33, -96.33, -93.47, -89.03999999999999, -84.61, -80.18, -75.75, -71.32, -66.89, -62.46, -58.03, -53.6, -49.17, -44.74, -40.31], 
-                    “selected_tick”: 5, 
-                    "session_id": 3448, 
-                    "step_count": 1
-                }'
-    
     """
 
     __tablename__ = 'users'
@@ -27,17 +23,45 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
-
-    # Address could be divided into street, city, state, zip, etc.
-    # We can also use a separate table for address
-    # We can decide on a max string length for the address later. 
     address = db.Column(db.String, nullable=False)
-    
-    # Image is a string of the image file name
     image = db.Column(db.String(100), nullable=False)
-    audio_data = db.Column(db.String) 
-    # Will audio_data always be included at the time of user creation? Or will it be added later? 
-    # Should audio_data be a separate table by reference to user id?
+    audio = db.relationship('Audio')
 
     def __repr__(self):
         return f"Name: {self.name}, Email: {self.email}, Address: {self.address}, Image: {self.image}"
+
+
+class Audio(db.Model):
+    """ 
+
+        Audio Model includes "session_id"(key), user_id(foreign key), "selected_tick", "step_count", and, by relation, "ticks".
+
+    """
+
+    __tablename__ = 'audio'
+
+    session_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False )
+    selected_tick = db.Column(db.Integer, nullable=False)
+    step_count = db.Column(db.Integer, nullable=False)
+    ticks = db.relationship('Ticks')
+
+
+class Ticks(db.Model):
+    """
+    
+        Ticks is an intersection table between Audio and Users. 
+        It includes unique "ticks_id"(key), an audio "session_id"(key) matched with a user_id, and "tick" value.
+        The array of multiple ticks that enters as JSON is parsed into this table and refereced against the audio session_id.
+    
+    """
+
+    __tablename__ = 'ticks'
+
+    ticks_id = db.Column(db.Integer, autoincrement=True)
+    session_id = db.Column(db.Integer, db.ForeignKey('audio.session_id'), nullable=False)
+    tick = db.Column(db.Integer, nullable=False)
+    db.PrimaryKeyConstraint(ticks_id, session_id)
+
+    
+    
