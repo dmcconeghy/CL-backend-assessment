@@ -65,7 +65,18 @@ def get_user(user_id):
 
 @app.route('/api/users/<int:user_id>', methods=['PATCH'])
 def update_user(user_id):
-    return "User updated"
+
+    user = User.query.get_or_404(user_id)
+
+    user.name = request.args.get('name') or user.name
+    user.email = request.args.get('email') or user.email
+    user.address = request.args.get('address') or user.address
+    user.image = request.args.get('image') or user.image
+
+    db.session.commit()
+
+    return f"Updated {User.__repr__(user)}"
+    
 
 @app.route('/api/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
@@ -74,7 +85,7 @@ def delete_user(user_id):
 
     db.session.delete(user)
     db.session.commit()
-    
+
     return f"User {user_id} deleted"
 
 # AUDIO API ROUTES [POST, GET, PATCH]
