@@ -27,6 +27,8 @@ db.create_all()
 def home_page():
     return "Mission Control to Major Tom"
 
+# USERS API ROUTES [POST, GET, PATCH, DELETE]
+
 @app.route('/api/users', methods=['POST'])
 def create_user():
     return "User created"
@@ -43,15 +45,41 @@ def update_user(user_id):
 def delete_user(user_id):
     return "User deleted"
 
+# AUDIO API ROUTES [POST, GET, PATCH]
+
 @app.route('/api/audio/<int:user_id>', methods=['POST'])
 def insert_audio_data(user_id):
     return "Audio data added"
 
-@app.route('/api/users/<int:user_id>/audio', methods=['GET'])
-def get_audio_data(user_id):
+@app.route('/api/audio/<int:user_id>/audio', methods=['GET'])
+def read_audio_data(user_id):
     return "Audio data retrieved"
 
-@app.route('/api/users/<int:user_id>/<int:session_id>', methods=['PATCH'])
+@app.route('/api/audio/<int:user_id>/<int:session_id>', methods=['PATCH'])
 def update_audio_data(user_id, session_id):
     return "Audio data updated"
+    
 
+# USERS API SEARCH ROUTES [GET by id, name, email, or address]
+
+@app.route('/api/users/search/<int:id>', methods=['GET'])
+def search_by_user_id(user_id):
+    return "User data found (or not)"
+
+@app.route('/api/users/search/<name:string>', methods=['GET'])
+def search_by_user_name(user_name):
+    return "User data found (or not)"
+
+@app.route('/api/users/search/<email:string>', methods=['GET'])
+def search_by_user_email(user_email):
+    return "User data found (or not)"
+
+@app.route('/api/users/search/<address:string>', methods=['GET'])
+def search_by_user_address(user_address):
+    return "User data found (or not)"
+
+# AUDIO API SEARCH ROUTES [GET by session_id]
+
+@app.route('/api/audio/search/<int:session_id>', methods=['GET'])
+def search_by_session_id(session_id):
+    return "User data found (or not)"
