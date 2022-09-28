@@ -50,7 +50,9 @@ def create_user():
 
         return f"User created {new_user}"
     except IntegrityError:
-        return "A user with that email already exists"
+        # Adding complexity to our error feedback messages can be integrated with a front end forms and/or
+        # We can treat the user information individually to make sure all are present before checking for potential duplicate emails.  
+        return "A user with that email already exists or you are missing required inputs"
     
     
 @app.route('/api/users/<int:user_id>', methods=['GET'])
@@ -67,7 +69,13 @@ def update_user(user_id):
 
 @app.route('/api/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    return "User deleted"
+
+    user = User.query.get_or_404(user_id)
+
+    db.session.delete(user)
+    db.session.commit()
+    
+    return f"User {user_id} deleted"
 
 # AUDIO API ROUTES [POST, GET, PATCH]
 
