@@ -1,3 +1,4 @@
+from enum import unique
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -40,14 +41,24 @@ class Audio(db.Model):
 
     __tablename__ = 'audio'
 
-    session_id = db.Column(db.Integer, primary_key=True)
+    session_id = db.Column(db.Integer, primary_key=True, unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False )
     selected_tick = db.Column(db.Integer, nullable=False)
     step_count = db.Column(db.Integer, nullable=False)
-    ticks = db.relationship('Ticks')
+    
+
+    def __repr__(self):
+        return f''' Session ID: {self.session_id}, 
+                    User ID: {self.user_id}, 
+                    Selected Tick: {self.selected_tick}, 
+                    Step Count: {self.step_count}, 
+                    Ticks: {Tick.compile_ticks_by_session(self.session_id)}'''
+
+    
+    # It seems a natural next step to deliver a user's multiple sessions. 
 
 
-class Ticks(db.Model):
+class Tick(db.Model):
     """
     
         Ticks is an intersection table between Audio and Users. 
@@ -60,8 +71,13 @@ class Ticks(db.Model):
 
     ticks_id = db.Column(db.Integer, autoincrement=True)
     session_id = db.Column(db.Integer, db.ForeignKey('audio.session_id'), nullable=False)
-    tick = db.Column(db.Integer, nullable=False)
+    tick = db.Column(db.Numeric, nullable=False)
     db.PrimaryKeyConstraint(ticks_id, session_id)
+    ticks = db.relationship('Audio', backref='ticks')
 
-    
-    
+
+    def compile_ticks_by_session(session_id):
+        ticks = Tick.query.filter(Tick.session_id == session_id).all()
+        output = [float(t.tick) for t in ticks]
+        return output
+        
