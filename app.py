@@ -211,12 +211,13 @@ def get_audio_data_by_user(user_id):
 def get_audio_data_by_session(session_id):
     """
         Given a session_id, return the audio data.
+        Doubles as a search route, returning a 404 if there is no such session. 
     
     """
     
     audio = Audio.query.get_or_404(session_id)
 
-    return f"Here's the: {audio}"
+    return f"Here's the session: \n {audio}"
 
 @app.route('/api/audio/update/<int:session_id>', methods=['PATCH'])
 def update_audio_data(session_id):
@@ -346,15 +347,4 @@ def search_by_user_address():
     else:
         return f"{User.__repr__(user)}"
 
-# AUDIO API SEARCH ROUTES [GET by session_id]
 
-# @app.route('/api/audio/search/<int:session_id>', methods=['GET'])
-# def search_by_session_id(session_id):
-
-#     # This will be updated to return a list of audio data for a given session_id
-
-#     # user = User.query.filter_by(User.session_id=session_id).first()
-
-
-#     # This should be updated to return the audio data rather than the user. 
-#     return f"{User.__repr__(user)}"
