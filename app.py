@@ -162,7 +162,7 @@ def insert_audio_data():
         return "Step count must be between 0 and 9"
     if selected_tick not in range(0, 15):
         return "Selected tick must be between 0 and 14"
-    if len(ticks) is not 15:
+    if len(ticks) != 15:
         return "Ticks must be an array of 15 values"
     
     try: 
@@ -260,7 +260,7 @@ def update_audio_data(session_id):
         updated_ticks = updated_ticks_string.split(',')
         updated_ticks = [float(tick) for tick in updated_ticks]
 
-        if len(updated_ticks) is not 15:
+        if len(updated_ticks) != 15:
             
             return f"Ticks must be an array of 15 values"
          
@@ -348,3 +348,7 @@ def search_by_user_address():
         return f"{User.__repr__(user)}"
 
 
+# Sometimes needed for Heroku deployment. 
+# if __name__ == "__main__":
+#     port = int(os.environ.get("PORT", 5000))
+#     app.run(debug=True, host="0.0.0.0", port=port)
