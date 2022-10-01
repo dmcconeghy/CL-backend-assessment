@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, json
 from flask_debugtoolbar import DebugToolbarExtension
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import exc
 from models import db, connect_db, User, Audio, Tick
 
 uri = os.environ.get('DATABASE_URL', 'postgresql:///concha_labs')
@@ -21,6 +21,8 @@ toolbar = DebugToolbarExtension(app)
 connect_db(app)
 
 db.create_all()
+
+
 
 @app.route('/')
 def home_page():
@@ -59,7 +61,7 @@ def create_user():
         db.session.commit()
 
         return f"User created {new_user}"
-    except IntegrityError:
+    except exc.IntegrityError:
         # Prevent a DB error from being returned to the user if their email is already in use.
           
         return "A user with that email already exists."
@@ -182,7 +184,7 @@ def insert_audio_data():
                 )
 
                 db.session.add(new_Tick)
-        except IntegrityError:
+        except exc.IntegrityError:
            return "Error adding tick data"
 
         db.session.add(new_audio)
@@ -191,7 +193,7 @@ def insert_audio_data():
 
         return f"Audio data created {new_audio}"
   
-    except IntegrityError:
+    except exc.IntegrityError:
 
         return "Session IDs must be unique."
 
@@ -290,7 +292,7 @@ def search_by_user_id(id):
 
         user = User.query.get_or_404(id)
         return f"{User.__repr__(user)}"
-    except IntegrityError:
+    except exc.IntegrityError:
         return "No users found"
 
 @app.route('/api/users/search/name', methods=['GET'])
@@ -347,7 +349,10 @@ def search_by_user_address():
     else:
         return f"{User.__repr__(user)}"
 
-# Needed for GCP deployment?
+# Ports for GCP deployment?
 # if __name__ == "__main__":
 #     port = int(os.environ.get("PORT", 8080))
 #     app.run(debug=True, host="0.0.0.0", port=port)
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
