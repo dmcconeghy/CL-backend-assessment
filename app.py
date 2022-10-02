@@ -1,8 +1,8 @@
-import os
-from flask import Flask, request, json
+from flask import Flask, request, json, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy import exc
 from models import db, connect_db, User, Audio, Tick
+import os
 
 uri = os.environ.get('DATABASE_URL', 'postgresql:///concha_labs')
 
@@ -10,6 +10,11 @@ if uri.startswith("postgres://"):
     uri = uri.replace("postgres://", "postgresql://", 1)
 
 app = Flask(__name__)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    # app.run(debug=True, host="0.0.0.0", port=port)
+    app.run(debug=True)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -21,7 +26,6 @@ toolbar = DebugToolbarExtension(app)
 connect_db(app)
 
 db.create_all()
-
 
 
 @app.route('/')
@@ -348,11 +352,3 @@ def search_by_user_address():
         return "No users found."
     else:
         return f"{User.__repr__(user)}"
-
-# Ports for GCP deployment?
-# if __name__ == "__main__":
-#     port = int(os.environ.get("PORT", 8080))
-#     app.run(debug=True, host="0.0.0.0", port=port)
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
