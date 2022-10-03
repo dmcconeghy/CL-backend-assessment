@@ -30,7 +30,7 @@ db.create_all()
 
 @app.route('/')
 def home_page():
-    return "Mission Control to Major Tom"
+    return "Ground Control to Major Tom"
 
 # USERS API ROUTES [POST, GET, PATCH, DELETE]
 
@@ -208,7 +208,7 @@ def get_audio_data_by_user(user_id):
     
     """
     
-    audio = Audio.query.filter(Audio.user_id == user_id).all()
+    audio = Audio.query.get_or_404(Audio.user_id == user_id).all()
 
     # return f"Audio data for user #{user_id} : {Audio.__repr__(audio)}"
     return f"Here's the data for user #{user_id}'s sessions: {audio}"
@@ -263,22 +263,24 @@ def update_audio_data(session_id):
     else:
 
         updated_ticks_string = request.args.get('ticks')
-        updated_ticks = updated_ticks_string.split(',')
-        updated_ticks = [float(tick) for tick in updated_ticks]
+        print(updated_ticks_string)
+        split_ticks = updated_ticks_string.split(',')
+        print(split_ticks)
+        updated_ticks = [float(tick) for tick in split_ticks]
+        print(updated_ticks)
 
         if len(updated_ticks) != 15:
             
             return f"Ticks must be an array of 15 values"
          
-
         original_ticks = Tick.query.filter(Tick.session_id == session_id).all()
 
         for t in range (0, 15):
             if updated_ticks[t] > -10.0 or updated_ticks[t] < -100.0:
                 return f"Ticks must be between -10.0 and -100.0"
 
-            original_ticks[t] = updated_ticks[t]
-        
+            original_ticks[t].tick = updated_ticks[t]
+ 
     db.session.commit()
 
     return f"Updated {audio}"
