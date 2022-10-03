@@ -26,18 +26,15 @@ Two project notes:
     docker pull dmcconeghy/cl-pythonapp-image
     ```
 
-3. Run the image:
-    ```
-    docker run dmcconeghy/cl-pythonapp-image
-    ```
-
-4. Docker Compose the containers:
+3. Docker Compose the containers:
     ``` 
     docker compose up -d db
+    ```
+    ```
     docker compose up --build pythonapp 
     ```
 
-Visiting the server locally at http://127.0.0.1 should return: `Ground Control to Major Tom`
+Visiting the server locally at http://127.0.0.1:80 should return: `Ground Control to Major Tom`
 
 # Using the API:
 
