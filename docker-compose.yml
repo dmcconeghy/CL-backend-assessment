@@ -1,9 +1,7 @@
 version: '3.9'
 
 services:
-  networks:
-    network:
-      external: true
+
   db:
       container_name: db
       image: postgres:12
