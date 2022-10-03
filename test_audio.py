@@ -2,7 +2,15 @@ import os
 from unittest import TestCase
 from models import db, User, Audio, Tick
 
-os.environ['DATABASE_URL'] = "postgresql:///concha_labs_test"
+# This DATABASE_URL will cause testing faiures. 
+# The host "db" can't be found, but I am unsure how to correctly reference the db container's host ip.
+# The tests work locally with a local install of appropriate psql databases. 
+# The database works locally and successfully spins up the database. 
+# But this path doesn't work in the containers.  
+# os.environ['DATABASE_URL'] = 'postgresql://postgres:postgres@db:5432/postgres'
+
+# For offline local testing. 
+os.environ['DATABASE_URL'] = "postgresql:///c_labs"
 
 from app import app
 
