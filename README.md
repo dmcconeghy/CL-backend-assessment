@@ -1,4 +1,13 @@
+# Take Home Project
 
+Create a CRUD webserver and db in Python for users and their audio data.  
+Use Docker/Docker Compose to run your application locally. 
+Provide unittests for your work. 
+Save your code to a git repository with instructions for use. 
+
+Two project notes: 
+- I was unable within the time I had to provide instructions for configuring this for GCP.
+- There is a specific bug with running tests locally inside the Docker containers. See test_app.py or test_audio.py lines 5-13. 
 
 # Local Set Up
 
@@ -9,7 +18,7 @@
 
 2. Move to the project directory:
     ```
-    cd cl-backendassessment 
+    cd cl-backend-assessment 
     ```
 
 3. Pull the Docker image for this project:
@@ -99,3 +108,32 @@ curl --request POST \
  - Additionally, if we want to request ALL of a particular user's audio session data, then we can perform that request as follows: `http://127.0.0.1/api/audio/<user_id>`.  
 
 # Testing this project
+
+- This project has two unittest testing files. Their success has been confirmed with a local (non-Docker) instance of flask. 
+- However, I was unable to properly resolve the host name for testing. Thus the instructions for local testing for now are:
+1. In a cmd prompt start your local psql database: 
+``` 
+sudo service postgresql start 
+```
+2. Create your database:
+``` 
+createdb c_labs 
+```
+3. To test the application's user functions, in the project's root directory run: 
+``` 
+python3 -m unittest test_app.py 
+```
+4. To test the applications audio functions, in the project's root directory run:
+``` 
+python3 -m unittest test_audio.py 
+```
+N.B. Running the unittests together can encounter an error with the db users_id.
+
+# What should come next? 
+
+  This short project has a number of immediate upgrades that would be welcome. 
+  First, we should likely run the incoming data against a json schema with something like marshmallow rather than doing direct logic checks.
+  Second, due to time limitations there are several instances were wet code should become DRY. E.g., testing set up
+  Third, in line with project goals, the tests should be configurable to run locally or remotely and with a GCP deployment. 
+  Fourth, the endpoints return strings. Perhaps they would be better returning JSON. Project use is an unkown here. 
+  Fifth, I used Flask/PSQL/SQLAlchemy and wrote my endpoints manually. It might be better to run a package specifically designed for REST API endpoints. 
