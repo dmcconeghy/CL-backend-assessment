@@ -13,7 +13,6 @@ app = Flask(__name__)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    # app.run(debug=True, host="0.0.0.0", port=port)
     app.run(debug=True)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
@@ -74,7 +73,7 @@ def create_user():
 def get_user(user_id):
 
     """
-        Given a user_id, return the user's basic information.
+        Given a user_id, return the user's basic information as a string.
     
     """
 
@@ -90,6 +89,7 @@ def update_user(user_id):
     """
         Patch route updates user information. 
         Accepts inputs for name, email, address, or image. 
+        Returns the updated information as a string.
     
     """
 
@@ -109,7 +109,8 @@ def update_user(user_id):
 @app.route('/api/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     """
-        Deletes the user with the given user_id. 
+        Deletes the user with the given user_id.
+        Returns a confirmation.  
     
     """
 
@@ -204,7 +205,7 @@ def insert_audio_data():
 @app.route('/api/audio/<int:user_id>', methods=['GET'])
 def get_audio_data_by_user(user_id):
     """
-        Given a user_id, return an array of user audio data sessions. 
+        Given a user_id, return an array of user audio data and sessions. 
     
     """
     
@@ -216,7 +217,7 @@ def get_audio_data_by_user(user_id):
 @app.route('/api/audio/session/<int:session_id>', methods=['GET'])
 def get_audio_data_by_session(session_id):
     """
-        Given a session_id, return the audio data.
+        Given a session_id, return the audio data as a string.
         Doubles as a search route, returning a 404 if there is no such session. 
     
     """
@@ -235,7 +236,7 @@ def update_audio_data(session_id):
         * We would also need to check for duplicate session ids before committing. 
         The ticks array will be overwritten with the newer values.  
 
-        Returns the audio object's repr. 
+        Returns the audio object's repr string. 
     
     """
 
@@ -291,6 +292,11 @@ def update_audio_data(session_id):
 
 @app.route('/api/users/search/id', methods=['GET'])
 def search_by_user_id(id):
+    """
+        Search/Get request for a specific user id. 
+        Returns the user's basic information or 404. 
+    
+    """
 
     id = request.args.get('id')
 
