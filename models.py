@@ -41,7 +41,7 @@ class Audio(db.Model):
     __tablename__ = 'audio'
 
     session_id = db.Column(db.Integer, primary_key=True, unique=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False )
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), nullable=False )
     selected_tick = db.Column(db.Integer, nullable=False)
     step_count = db.Column(db.Integer, nullable=False)
     
@@ -52,9 +52,6 @@ class Audio(db.Model):
                     Selected Tick: {self.selected_tick}, 
                     Step Count: {self.step_count}, 
                     Ticks: {Tick.compile_ticks_by_session(self.session_id)}'''
-
-    
-    # It seems a natural next step to deliver a user's multiple sessions. 
 
 
 class Tick(db.Model):
@@ -69,7 +66,7 @@ class Tick(db.Model):
     __tablename__ = 'ticks'
 
     ticks_id = db.Column(db.Integer, autoincrement=True)
-    session_id = db.Column(db.Integer, db.ForeignKey('audio.session_id'), nullable=False)
+    session_id = db.Column(db.Integer, db.ForeignKey('audio.session_id', ondelete='cascade'), nullable=False)
     tick = db.Column(db.Numeric, nullable=False)
     db.PrimaryKeyConstraint(ticks_id, session_id)
     ticks = db.relationship('Audio', backref='ticks')
