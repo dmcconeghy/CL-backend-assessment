@@ -10,7 +10,7 @@ from models import db, User, Audio, Tick
 # os.environ['DATABASE_URL'] = 'postgresql://postgres:postgres@db:5432/postgres'
 
 # For offline local testing. 
-os.environ['DATABASE_URL'] = "postgresql:///c_labs"
+os.environ['DATABASE_URL'] = "postgresql:///concha_labs_test"
 
 from app import app
 

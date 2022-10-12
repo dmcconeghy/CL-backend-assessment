@@ -23,7 +23,7 @@ services:
       - "80:80"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres 
-      # - DATABASE_URL=postgresql:///concha_labs
+      # - DATABASE_URL=postgresql:///cl_backend
     # restart: always
     depends_on:
       - db
